@@ -1,0 +1,7 @@
+code|entry_mode
+1|Terminal used with key entry.
+2|Track 1 read.
+3|Track2 read.
+4|Contactless magnetic stripe read.
+5|EMV chip read
+6|contactless EMV

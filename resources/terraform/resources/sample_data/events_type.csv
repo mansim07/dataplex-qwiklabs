@@ -1,0 +1,17 @@
+ID|Event_Code|Descripton|has_timestamp|has_value
+1|crs|Card read started|T|F
+2|cr|Card read|T|F
+3|cp|CDCVM performed|F|F
+4|pofs|Offline PIN started|T|F
+5|pofc|Offline PIN canceled|T|F
+6|poff|Offline PIN failed|T|F
+7|pofv|Offline PIN entered|T|F
+8|ofd|Offline declined|F|F
+9|ofa|Offline approved|F|F
+10|pons|Online PIN started|T|F
+11|ponc|Online PIN canceled|T|F 
+12|onr|Online result|T|T
+13|2ar|2nd AC rejected|F|F
+14|ss|Signature started|T|F
+15|sf|Signature failed|T|F
+16|sv|Signature verified|F|F

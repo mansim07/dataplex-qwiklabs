@@ -1,0 +1,9 @@
+origin_code|origin_desc
+1|Originated at a credit card terminal.
+2|Originated through an eCommerce system.
+3|Originated as a mail order or telephone order transaction.
+4|Originated with Apple Pay.
+5|Originated as a Successful 3D Secure transaction.
+6|Originated as an Attempted 3D Secure transaction.
+7|Originated as a recurring transaction on the card.
+8|Originated in a Payframe.
