@@ -58,7 +58,6 @@ resource "google_dataplex_asset" "register_bq_assets1" {
  for_each = {
     #"customer-raw-data/Customer Raw Data/customer-raw-zone/consumer-banking--customer--domain" : var.customers_bucket_name,
     "customer-data-product/Customer Data Product/customer-data-product-zone/consumer-banking--customer--domain" : "customer_data_product",
-    "customer-data-product-reference/Customer Reference Data Product/customer-data-product-zone/consumer-banking--customer--domain" : "customer_ref_data" ,
     "customer-refined-data/Customer Refined Data/customer-curated-zone/consumer-banking--customer--domain" : "customer_refined_data"
   }
   name          = element(split("/", each.key), 0)

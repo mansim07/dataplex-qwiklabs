@@ -125,6 +125,7 @@ resource "null_resource" "dataplex_permissions_2" {
 resource "null_resource" "delete_empty_bq_ds" {
   provisioner "local-exec" {
     command = <<-EOT
+    bq rm -r -f -d ${var.project_id}:customer_curated_zone
     bq rm -r -f -d ${var.project_id}:customer_data_product_zone
     EOT
     }
