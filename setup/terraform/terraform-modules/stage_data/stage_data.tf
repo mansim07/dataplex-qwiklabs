@@ -27,7 +27,6 @@ variable "data_gen_git_repo" {}
 # Extract Data
 ####################################################################################
 
-
 resource "null_resource" "run_datagen" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -38,7 +37,7 @@ resource "null_resource" "run_datagen" {
  
   }
 
-resource "google_storage_bucket" "storage_bucket_1" {
+resource "google_storage_bucket" "customer_storage_bucket" {
   project                     = var.project_id
   name                        = var.customers_bucket_name
   location                    = var.location
@@ -60,7 +59,7 @@ resource "google_storage_bucket_object" "gcs_customers_objects" {
   name        = each.value
   source      = each.key
   bucket = var.customers_bucket_name
-  depends_on = [google_storage_bucket.storage_bucket_1]
+  depends_on = [google_storage_bucket.customer_storage_bucket]
 }
 
 ####################################################################################
