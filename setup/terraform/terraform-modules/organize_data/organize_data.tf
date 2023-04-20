@@ -99,7 +99,6 @@ resource "google_dataplex_zone" "create_customer_zones" {
 # Dataplex Service Account 
 ####################################################################################
 
-
 resource "null_resource" "dataplex_permissions_1" {
   provisioner "local-exec" {
     command = format("gcloud projects add-iam-policy-binding %s --member=\"serviceAccount:service-%s@gcp-sa-dataplex.iam.gserviceaccount.com\" --role=\"roles/dataplex.dataReader\"", 
@@ -107,7 +106,7 @@ resource "null_resource" "dataplex_permissions_1" {
                       var.project_number)
   }
 
-  depends_on = [google_dataplex_zone.create_customer_lakes]
+  depends_on = [google_dataplex_zone.create_customer_zones]
 }
 
 resource "null_resource" "dataplex_permissions_2" {

@@ -16,18 +16,15 @@ Paste and run the below variables in Cloud Shell-
 ```
 PROJECT_ID=`gcloud config list --format "value(core.project)" 2>/dev/null`
 PROJECT_NBR=`gcloud projects describe $PROJECT_ID | grep projectNumber | cut -d':' -f2 |  tr -d "'" | xargs`
-
-YOUR_USER_PRINCIPAL_NAME=`gcloud auth list --filter=status:ACTIVE --format="value(account)"`
 ORG_ID=`gcloud organizations list --format="value(name)"`
-BQ_LOCATION="US"
-DATAPROC_REGION="us-central1"
+DATA_LOCATION="us-central1"
 ```
 
 ## 3. Initialize Terraform
 
 Paste and run the below  in Cloud Shell-
 ```
-cd ~/techcon23-datalake-lab/00-resources/terraform
+cd ~/dataplex-techcon23/setup/terraform
 
 terraform init
 ```
@@ -39,10 +36,8 @@ Paste and run the below  in Cloud Shell-
 terraform plan \
   -var="project_id=${PROJECT_ID}" \
   -var="project_number=${PROJECT_NBR}" \
-  -var="user_principal_name=${YOUR_USER_PRINCIPAL_NAME}" \
   -var="org_id=${ORG_ID}" \
-  -var="bq_region=${BQ_LOCATION}" \
-  -var="org_id=${DATAPROC_REGION}" 
+  -var="data_location=${DATA_LOCATION}"
   
 ```
 
@@ -53,11 +48,8 @@ Paste and run the below  in Cloud Shell-
 terraform apply \
   -var="project_id=${PROJECT_ID}" \
   -var="project_number=${PROJECT_NBR}" \
-  -var="user_principal_name=${YOUR_USER_PRINCIPAL_NAME}" \
   -var="org_id=${ORG_ID}" \
-  -var="bq_region=${BQ_LOCATION}" \
-  -var="org_id=${DATAPROC_REGION}" \
-  --auto-approve
+  -var="data_location=${DATA_LOCATION}"
   
 ```
 

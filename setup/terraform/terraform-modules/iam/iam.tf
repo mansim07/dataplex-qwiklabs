@@ -166,11 +166,11 @@ resource "time_sleep" "sleep_after_network_and_iam_steps" {
   create_duration = "120s"
   depends_on = [
                google_project_iam_member.iam_customer_sa,
-               iam_cls_pii_no_access_user,
-               iam_cls_pii_hashed_user,
-               iam_cls_pii_null_user,
-               iam_rls_user1,
-               iam_rls_user2
+               google_project_iam_member.iam_cls_pii_no_access_user,
+               google_project_iam_member.iam_cls_pii_hashed_user,
+               google_project_iam_member.iam_cls_pii_null_user,
+               google_project_iam_member.iam_rls_user1,
+               google_project_iam_member.iam_rls_user2
               ]
 }
 
