@@ -24,9 +24,39 @@ variable "lake_name" {}
 variable "customers_bucket_name" {}
 variable "datastore_project_id" {}
 
-resource "google_dataplex_asset" "register_bq_assets1" {
+
+resource "google_dataplex_asset" "register_customer_gcs_asset" {
  for_each = {
     "customer-raw-data/Customer Raw Data/customer-raw-zone/consumer-banking--customer--domain" : var.customers_bucket_name,
+  
+  }
+  name          = element(split("/", each.key), 0)
+  display_name  = element(split("/", each.key), 1)
+  location      = var.location
+
+  lake = element(split("/", each.key), 3)
+  dataplex_zone = element(split("/", each.key), 2)
+
+  discovery_spec {
+    enabled = true
+    csv_options {
+      delimiter = "|"
+      header_rows = 1
+    }
+  }
+
+  resource_spec {
+    name = "projects/${var.datastore_project_id}/buckets/${each.value}"
+    type = "STORAGE_BUCKET"
+  }
+
+  project = var.project_id
+
+}
+
+resource "google_dataplex_asset" "register_bq_assets1" {
+ for_each = {
+    #"customer-raw-data/Customer Raw Data/customer-raw-zone/consumer-banking--customer--domain" : var.customers_bucket_name,
     "customer-data-product/Customer Data Product/customer-data-product-zone/consumer-banking--customer--domain" : "customer_data_product",
     "customer-data-product-reference/Customer Reference Data Product/customer-data-product-zone/consumer-banking--customer--domain" : "customer_ref_data" ,
     "customer-refined-data/Customer Refined Data/customer-curated-zone/consumer-banking--customer--domain" : "customer_refined_data"
@@ -48,4 +78,5 @@ resource "google_dataplex_asset" "register_bq_assets1" {
   }
 
   project = var.project_id
+  depends_on  = [google_dataplex_asset.register_customer_gcs_asset]
 }

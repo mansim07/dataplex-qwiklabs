@@ -45,23 +45,6 @@ resource "google_storage_bucket" "storage_bucket_bqtemp" {
 }
 
 
-resource "google_bigquery_dataset" "bigquery_datasets" {
-  for_each = toset([ 
-   "central_dlp_data",
-   "central_audit_data",
-   "central_dq_results",
-   "enterprise_reference_data"
-  ])
-  project                     = var.project_id
-  dataset_id                  = each.key
-  friendly_name               = each.key
-  description                 = "${each.key} Dataset for Dataplex Demo"
-  location                    = var.location
-  delete_contents_on_destroy  = true
-  
-  depends_on = [google_storage_bucket.storage_bucket_bqtemp]
-}
-
 resource "null_resource" "setup_code" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -83,7 +66,6 @@ resource "null_resource" "setup_code" {
     EOT
     }
     depends_on = [
-                  google_bigquery_dataset.bigquery_datasets,
                   google_storage_bucket.storage_bucket_process,
                   google_storage_bucket.storage_bucket_bqtemp]
 
