@@ -54,8 +54,6 @@ resource "google_storage_bucket_object" "gcs_customers_objects" {
 resource "google_bigquery_dataset" "bigquery_datasets" {
   for_each = toset([ 
     "customer_data_product",
-    "customer_private",
-    "customer_ref_data",
     "customer_refined_data",
     "central_dlp_data",
    "central_audit_data",
@@ -86,8 +84,8 @@ resource "random_integer" "jobid" {
 
 resource "google_bigquery_job" "job" {
   for_each = {
-    "customer_refined_data.mcc_code" : format("gs://%s/customers_data/dt=%s/customer.csv", var.customers_bucket_name, var.date_partition),
-    "customer_refined_data.signature" : format("gs://%s/customers_data/dt=%s/cc_customer.csv", var.customers_bucket_name, var.date_partition),
+    "customer_refined_data.customer_data" : format("gs://%s/customers_data/dt=%s/customer.csv", var.customers_bucket_name, var.date_partition),
+    "customer_refined_data.cc_customer_data" : format("gs://%s/cc_customers_data/dt=%s/cc_customer.csv", var.customers_bucket_name, var.date_partition),
   }
   job_id     = format("job_load_%s_${random_integer.jobid.result}", element(split(".", each.key), 1))
   project    = var.project_id
@@ -235,26 +233,16 @@ resource "google_bigquery_table" "customer_data_product" {
     "name": "email",
     "type": "RECORD"
   },
+    {
+    "name": "token",
+    "type": "STRING"
+  },
+
   {
     "name": "ingest_date",
     "type": "DATE"
-  }
-]
-
-EOF
-
- depends_on = [google_bigquery_job.job]
-
-}
-
-resource "google_bigquery_table" "cc_customer_data_product" {
-  dataset_id = "customer_data_product"
-  table_id   = "cc_customer_data"
-  project    = var.project_id
-
-  schema = <<EOF
-[
-  {
+  },
+   {
     "name": "cc_number",
     "type": "INTEGER"
   },
@@ -273,21 +261,161 @@ resource "google_bigquery_table" "cc_customer_data_product" {
   {
     "name": "cc_card_type",
     "type": "STRING"
-  },
+  }
+]
+
+EOF
+
+ depends_on = [google_bigquery_job.job]
+
+}
+
+
+resource "google_bigquery_table" "customer_data_product" {
+  dataset_id = "customer_data_product"
+  table_id   = "customer_data"
+  project    = var.project_id
+
+  schema = <<EOF
+[
   {
     "name": "client_id",
     "type": "STRING"
   },
   {
-    "name": "token",
+    "name": "ssn",
     "type": "STRING"
   },
   {
+    "name": "first_name",
+    "type": "STRING"
+  },
+  {
+    "name": "middle_name",
+    "type": "INTEGER"
+  },
+  {
+    "name": "last_name",
+    "type": "STRING"
+  },
+  {
+    "name": "dob",
+    "type": "DATE"
+  },
+  {
+    "name": "gender",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "name": "status",
+        "type": "STRING"
+      },
+      {
+        "name": "street",
+        "type": "STRING"
+      },
+      {
+        "name": "city",
+        "type": "STRING"
+      },
+      {
+        "name": "state",
+        "type": "STRING"
+      },
+      {
+        "name": "zip_code",
+        "type": "INTEGER"
+      },
+      {
+        "name": "WKT",
+        "type": "GEOGRAPHY"
+      },
+      {
+        "name": "modify_date",
+        "type": "INTEGER"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "address_with_history",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "name": "primary",
+        "type": "STRING"
+      },
+      {
+        "name": "secondary",
+        "type": "INTEGER"
+      },
+      {
+        "name": "modify_date",
+        "type": "INTEGER"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "phone_num",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "name": "status",
+        "type": "STRING"
+      },
+      {
+        "name": "primary",
+        "type": "STRING"
+      },
+      {
+        "name": "secondary",
+        "type": "INTEGER"
+      },
+      {
+        "name": "modify_date",
+        "type": "INTEGER"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "email",
+    "type": "RECORD"
+  },
+    {
+    "name": "token",
+    "type": "STRING"
+  },
+
+  {
     "name": "ingest_date",
     "type": "DATE"
+  },
+   {
+    "name": "cc_number",
+    "type": "INTEGER"
+  },
+  {
+    "name": "cc_expiry",
+    "type": "STRING"
+  },
+  {
+    "name": "cc_provider",
+    "type": "STRING"
+  },
+  {
+    "name": "cc_ccv",
+    "type": "INTEGER"
+  },
+  {
+    "name": "cc_card_type",
+    "type": "STRING"
   }
 ]
+
 EOF
-depends_on = [google_bigquery_job.job]
+
+ depends_on = [google_bigquery_job.job]
 
 }
