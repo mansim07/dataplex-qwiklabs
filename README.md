@@ -2,14 +2,14 @@
 
 # Learning Objective
 
-Dataset-level security controls(Using Dataplex)
-Column-level security using Policy Tags
-Row-level Security(native)
-Metadata Management - Technical and business metadata
-Data Classification and tagging
-Data Security logging, auditing and monitoring
-Data Quality 
-Data Lineage 
+For field engineers to gain hands-on experience in securing and governing data in Bigquery data warehouse, which includes hands-on practice with the following features using a 90-minute lab. 
+- Dataset-level security controls
+- Column-level security using Policy Tags
+- Row-level Security
+- Data Classification and tagging
+- Data Profiling and Quality assessment  
+- Data Lineage 
+- Harvesting and ingesting technical and business metadata
 
 ## 1. Load the customer data product
 
