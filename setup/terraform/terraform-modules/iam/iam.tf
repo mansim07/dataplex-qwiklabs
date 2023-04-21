@@ -29,7 +29,7 @@ resource "google_service_account" "data_service_account" {
    for_each = {
     "customer-sa" : "customer-sa",
     "cls-pii-noaccess":"cls-pii-noaccess",
-    "cls-pii-hashed":"cls-pii-hashed",
+    "cls-pii-lastfour":"cls-pii-lastfour",
     "cls-pii-null":"cls-pii-null",
     "rls-user1":"rls-user1",
     "rls-user2":"rls-user2"
@@ -90,7 +90,7 @@ resource "google_project_iam_member" "iam_cls_pii_no_access_user" {
 }
 
 
-resource "google_project_iam_member" "iam_cls_pii_hashed_user" {
+resource "google_project_iam_member" "iam_cls_pii_lastfour_user" {
   for_each = toset([
 "roles/iam.serviceAccountUser",
 "roles/iam.serviceAccountTokenCreator",
@@ -99,7 +99,7 @@ resource "google_project_iam_member" "iam_cls_pii_hashed_user" {
 ])
   project  = var.project_id
   role     = each.key
-  member   = format("serviceAccount:cls-pii-hashed@%s.iam.gserviceaccount.com", var.project_id)
+  member   = format("serviceAccount:cls-pii-lastfour@%s.iam.gserviceaccount.com", var.project_id)
 
   depends_on = [
     google_service_account.data_service_account
@@ -167,7 +167,7 @@ resource "time_sleep" "sleep_after_network_and_iam_steps" {
   depends_on = [
                google_project_iam_member.iam_customer_sa,
                google_project_iam_member.iam_cls_pii_no_access_user,
-               google_project_iam_member.iam_cls_pii_hashed_user,
+               google_project_iam_member.iam_cls_pii_lastfour_user,
                google_project_iam_member.iam_cls_pii_null_user,
                google_project_iam_member.iam_rls_user1,
                google_project_iam_member.iam_rls_user2
@@ -183,7 +183,7 @@ resource "google_bigquery_dataset_iam_binding" "dlp_writer" {
     format("serviceAccount:customer-sa@%s.iam.gserviceaccount.com", var.project_id)
   ]
 depends_on = [
-              google_bigquery_dataset_iam_binding.dlp_writer
+             time_sleep.sleep_after_network_and_iam_steps
               ]
 
 }
@@ -197,7 +197,8 @@ resource "google_bigquery_dataset_iam_binding" "dq_writer" {
   ]
 
   depends_on = [
-               google_bigquery_dataset_iam_binding.dq_writer
+     google_bigquery_dataset_iam_binding.dlp_writer
+               
               ]
 }
 
@@ -209,6 +210,71 @@ resource "google_bigquery_dataset_iam_binding" "audit_writer" {
     format("serviceAccount:customer-sa@%s.iam.gserviceaccount.com", var.project_id)
   ]
   depends_on = [
-               google_bigquery_dataset_iam_binding.audit_writer
+    google_bigquery_dataset_iam_binding.dq_writer
+              
               ]
 }
+
+resource "google_bigquery_dataset_iam_binding" "cls_no_access_read" {
+  dataset_id = "customer_refined_data"
+  role       = "roles/bigquery.dataViewer"
+
+  members = [
+    format("serviceAccount:cls-pii-noaccess@%s.iam.gserviceaccount.com", var.project_id)
+  ]
+  depends_on = [
+                google_bigquery_dataset_iam_binding.audit_writer
+              ]
+}
+
+resource "google_bigquery_dataset_iam_binding" "cls_null_read" {
+  dataset_id = "customer_refined_data"
+  role       = "roles/bigquery.dataViewer"
+
+  members = [
+    format("serviceAccount:cls-pii-null@%s.iam.gserviceaccount.com", var.project_id)
+  ]
+  depends_on = [
+                google_bigquery_dataset_iam_binding.cls_no_access_read
+              ]
+}
+
+
+resource "google_bigquery_dataset_iam_binding" "cls_pii_lastfour_read" {
+  dataset_id = "customer_refined_data"
+  role       = "roles/bigquery.dataViewer"
+
+  members = [
+    format("serviceAccount:cls-pii-lastfour@%s.iam.gserviceaccount.com", var.project_id)
+  ]
+  depends_on = [
+                google_bigquery_dataset_iam_binding.cls_null_read
+              ]
+}
+
+resource "google_bigquery_dataset_iam_binding" "rls_user1_read" {
+  dataset_id = "customer_refined_data"
+  role       = "roles/bigquery.dataViewer"
+
+  members = [
+    format("serviceAccount:rls-user1@%s.iam.gserviceaccount.com", var.project_id)
+  ]
+  depends_on = [
+                google_bigquery_dataset_iam_binding.cls_pii_lastfour_read
+              ]
+}
+
+
+resource "google_bigquery_dataset_iam_binding" "rls_user2_read" {
+  dataset_id = "customer_refined_data"
+  role       = "roles/bigquery.dataViewer"
+
+  members = [
+    format("serviceAccount:rls-user2@%s.iam.gserviceaccount.com", var.project_id)
+  ]
+  depends_on = [
+                google_bigquery_dataset_iam_binding.rls_user1_read
+              ]
+}
+
+

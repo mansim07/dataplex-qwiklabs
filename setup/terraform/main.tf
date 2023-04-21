@@ -78,7 +78,8 @@ module "activate_service_apis" {
     "datapipelines.googleapis.com",
     "cloudscheduler.googleapis.com",
     "datalineage.googleapis.com",
-    "metastore.googleapis.com"
+    "metastore.googleapis.com",
+    "bigquerydatapolicy.googleapis.com"
     ]
 
   disable_services_on_destroy = false
