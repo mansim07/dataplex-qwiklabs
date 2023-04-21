@@ -507,7 +507,9 @@ NY
 
 ## 8. Business Metadata Enrichment 
 
-Add Business Overview 
+### 8.1 Add Business Overview 
+
+Execute the below command in gCloud
 
 ```
 export PROJECT_ID=$(gcloud config get-value project)
@@ -517,7 +519,9 @@ entry_name=`curl -X GET -H "x-goog-user-project: ${PROJECT_ID}" -H  "Authorizati
 curl -X POST -H "x-goog-user-project: d${PROJECT_ID}" -H  "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application.json" https://datacatalog.googleapis.com/v1/${entry_name}:modifyEntryOverview -d "{\"entryOverview\":{\"overview\":\"  <div class='ping' style='width:2000px;text-align: left;' ></div><header><h1>&#128508; Customer Demograhics Data Product</h1></header><br>This customer data table contains the data for customer demographics of all Bank of Mars retail banking customers. It contains PII information that can be accessed on need-to-know basis. <br> Customer data is the information that customers give us while interacting with our business through websites, applications, surveys, social media, marketing initiatives, and other online and offline channels. A good business plan depends on customer data. Data-driven businesses recognize the significance of this and take steps to guarantee that they gather the client data points required to enhance client experience and fine-tune business strategy over time.\"}}"
 ```
 
-Add Data Ownership Tag 
+
+
+### 8.2 Add Business Tag Programatically  
 1.  Open Cloud Shell and create a new file called “customer-tag.yaml” and copy and paste the below yaml into a file.
 
     ```bash 
@@ -547,6 +551,8 @@ Add Data Ownership Tag
 2. Upload the file to the temp gcs bucket
 
 ```bash 
+export PROJECT_ID=$(gcloud config get-value project)
+
 gsutil cp ~/customer-tag.yaml gs://${PROJECT_ID}_dataplex_temp/
 ```
 
@@ -567,6 +573,13 @@ gcloud dataplex tasks create customer-tag-job \
 
 ```
 
+4. Go to Dataplex UI and then Process to monitor the tagging job. 
+
+5. Once the job completes successfully. Go to **Dataplex** UI and search using **tag:data_product_information**
+
+6. Update the YAML, re-upload to gcs and re-run job to see the change reflect in the tag programatically. 
+
 ## 9. Data Lineage 
-1. Click on the Lineage tab to explore data lineage
-2. Custom lineage to indicate Customer data  came from csv file
+1.For the same customer_data, Click on the Lineage tab to explore data lineage
+
+![Data Lineage](/setup/terraform/resources/imgs/customer_data_lineage.png)
