@@ -432,7 +432,7 @@ NY
 11. Click on the ** CUSTOMER DATA PRODUCT PROFILE** job 
 12. Scroll down to look at the **LATEST JOB RESULTS** 
 
-![customer data profile](/setup/terraform/resources/imgs/customer_data_profile.png)
+![customer data profile](setup/terraform/resources/imgs/customer_data_profile.png)
 
 
 ## 6. Auto Data Quality
@@ -497,7 +497,7 @@ NY
 16. Choose **Publish to Dataplex** 
 17. Choose None as schedule
 18. Click Create
-![dlp_result](/setup/terraform/resources/imgs/dlp_result.png)
+![dlp_result](setup/terraform/resources/imgs/dlp_result.png)
 
 19. Go to Dataple Search 
 20. Search for "tag:data_loss_prevention"
@@ -581,4 +581,4 @@ gcloud dataplex tasks create customer-tag-job \
 ## 9. Data Lineage 
 1.For the same customer_data, Click on the Lineage tab to explore data lineage
 
-![Data Lineage](/setup/terraform/resources/imgs/customer_data_lineage.png)
+![Data Lineage](setup/terraform/resources/imgs/customer_data_lineage.png)
