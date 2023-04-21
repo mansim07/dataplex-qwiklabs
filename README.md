@@ -498,10 +498,75 @@ NY
 16. Choose **Publish to Dataplex** 
 17. Choose None as schedule
 18. Click Create
+![dlp_result](/setup/terraform/resources/imgs/dlp_result.png)
+
+19. Go to Dataple Search 
+20. Search for "tag:data_loss_prevention"
+21. Click on the entry 
+
 
 ## 8. Business Metadata Enrichment 
 
+Add Business Overview 
+
+```
+export PROJECT_ID=$(gcloud config get-value project)
+
+entry_name=`curl -X GET -H "x-goog-user-project: ${PROJECT_ID}" -H  "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application.json" "https://datacatalog.googleapis.com/v1/entries:lookup?linkedResource=//bigquery.googleapis.com/projects/${PROJECT_ID}/datasets/customer_data_product/tables/customer_data&fields=name" | jq -r '.name'`
+
+curl -X POST -H "x-goog-user-project: d${PROJECT_ID}" -H  "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application.json" https://datacatalog.googleapis.com/v1/${entry_name}:modifyEntryOverview -d "{\"entryOverview\":{\"overview\":\"  <div class='ping' style='width:2000px;text-align: left;' ></div><header><h1>&#128508; Customer Demograhics Data Product</h1></header><br>This customer data table contains the data for customer demographics of all Bank of Mars retail banking customers. It contains PII information that can be accessed on need-to-know basis. <br> Customer data is the information that customers give us while interacting with our business through websites, applications, surveys, social media, marketing initiatives, and other online and offline channels. A good business plan depends on customer data. Data-driven businesses recognize the significance of this and take steps to guarantee that they gather the client data points required to enhance client experience and fine-tune business strategy over time.\"}}"
+```
+
+Add Data Ownership Tag 
+1.  Open Cloud Shell and create a new file called “customer-tag.yaml” and copy and paste the below yaml into a file.
+
+    ```bash 
+    cd ~
+    vim customer-tag.yaml
+    ``` 
+    Enter the below text 
+    ```
+    data_product_id: derived
+    data_product_name: ""
+    data_product_type: ""
+    data_product_description: ""
+    data_product_icon: ""
+    data_product_category: ""
+    data_product_geo_region: ""
+    data_product_owner: ""
+    data_product_documentation: ""
+    domain: derived
+    domain_owner: ""
+    domain_type: ""
+    last_modified_by: ""
+    last_modify_date: ""
+    ```
+
+    **Make sure you always leave the last_modified_by and last _moddify date blank**
+
+2. Upload the file to the temp gcs bucket
+
+```bash 
+gsutil cp ~/customer-tag.yaml gs://${PROJECT_ID}_dataplex_temp/
+```
+
+3. Run the below command to create the tag for customer_data product entity 
+
+```bash 
+gcloud dataplex tasks create customer-tag-job \
+        --project=${PROJECT_ID} \
+        --location=us-central1 \
+        --vpc-sub-network-name=projects/${PROJECT_ID}/regions/us-central1/subnetworks/dataplex-default \
+        --lake='consumer-banking--customer--domain' \
+        --trigger-type=ON_DEMAND \
+        --execution-service-account=customer-sa@${PROJECT_ID}.iam.gserviceaccount.com \
+        --spark-main-class="com.google.cloud.dataplex.templates.dataproductinformation.DataProductInfo" \
+        --spark-file-uris="gs://${PROJECT_ID}_dataplex_temp/customer-tag.yaml" \
+        --container-image-java-jars="gs://${PROJECT_ID}_dataplex_process/common/tagmanager-1.0-SNAPSHOT.jar" \
+        --execution-args=^::^TASK_ARGS="--tag_template_id=projects/${PROJECT_ID}/locations/us-central1/tagTemplates/data_product_information, --project_id=${PROJECT_ID},--location=us-central1,--lake_id=consumer-banking--customer--domain,--zone_id=customer-data-product-zone,--entity_id=customer_data,--input_file=customer-tag.yaml"
+
+```
 
 ## 9. Data Lineage 
-
-
+1. Click on the Lineage tab to explore data lineage
+2. Custom lineage to indicate Customer data  came from csv file
