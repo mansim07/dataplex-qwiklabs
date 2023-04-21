@@ -124,8 +124,7 @@ echo $LOGGING_GMSA
     ],
     "status": "PERMISSION_DENIED"
   }
-}
-    ```
+}```
 
 - **Step 2:** Security policy application <br>
 
