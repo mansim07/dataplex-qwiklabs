@@ -432,7 +432,7 @@ NY
 11. Click on the ** CUSTOMER DATA PRODUCT PROFILE** job 
 12. Scroll down to look at the **LATEST JOB RESULTS** 
 
-![customer_data_profile](./setup/terraform/resources/imgs/customer_data_profile.png)
+![customer_data_profile](setup/terraform/resources/imgs/customer_data_profile.png "Image 1")
 
 
 ## 6. Auto Data Quality
