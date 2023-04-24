@@ -1,4 +1,4 @@
-# dataplex-qwiklabs
+# BigQuery Security and Governance using Cloud Dataplex
 
 # Learning Objective
 
