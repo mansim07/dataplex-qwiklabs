@@ -5,11 +5,11 @@
 By the end of the module, you will be able to <br>
  - Apply and manage BigQuery Security controls at the Dataset-level <br>
  - Apply and manage the fine grained security controls using Column-level security(Policy Tags) and Row-level Security <br>
-Define sensitivity info types and classify and tag sensitive BQ data using DLP <br>
-Derive Data Profiles for BQ data <br>
-Define and execute DQ rules to assess the quality of data in BQ  <br>
-Derive and view the Data Lineage <br>
-Enrich the technical metadata with business metadata in Catalog for BQ assets for better search and discoverability <br>
+- Define sensitivity info types and classify and tag sensitive BQ data using DLP <br>
+- Derive Data Profiles for BQ data <br>
+- Define and execute DQ rules to assess the quality of data in BQ  <br>
+- Derive and view the Data Lineage <br>
+- Enrich the technical metadata with business metadata in Catalog for BQ assets for better search and discoverability <br>
 
 
 ## 1. Load the customer data product
